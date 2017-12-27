@@ -23,6 +23,12 @@ class StockMove(models.Model):
                 if move.quant_ids:
                     check_date(move.date)
                     move.quant_ids.sudo().write({'in_date': move.date})
+            else:
+                if move.picking_id.date_done:
+                    move.date = move.picking_id.date_done
+                    if move.quant_ids:
+                        move.quant_ids.sudo().write({'in_date': move.picking_id.date_done})
+                                                                                        
         pickings = self.mapped('picking_id').filtered(
             lambda r: r.state == 'done')
         for picking in pickings:
